@@ -1,25 +1,26 @@
 import Login, { Render } from 'react-login-page';
 
-function LoginPage() {
+function AccountPage() {
   return (
     <Login>
       <Render>
         {({ fields, buttons }) => (
           <div style={{ justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column', height: '100vh', width: '175vh'}}>
-            <h1>CIS 4010 Survey System</h1>
-            <h2>Login</h2>
+            <h1>Account Creation</h1>
             <label>{fields.username}</label>
             <label>{fields.password}</label>
+            <label>{fields.passwordConfirm}</label>
             <div>{buttons.submit}</div>
-            <label>Don't have an account? <a href='/create_account'>Create one</a></label>
+            <label>Already have an account? <a href='/login'>Login</a></label>
           </div>
         )}
       </Render>
       <Login.Input keyname="username" placeholder="Enter username" />
       <Login.Input keyname="password" placeholder="Enter password" type="password" />
-      <Login.Button keyname="submit" type="submit">Sign In</Login.Button>
+      <Login.Input keyname="passwordConfirm" placeholder="Confirm password" type="passwordConfirm" />
+      <Login.Button keyname="submit" type="submit">Create Account</Login.Button>
     </Login>
   );
 }
 
-export default LoginPage;
+export default AccountPage;
