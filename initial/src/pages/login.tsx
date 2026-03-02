@@ -2,9 +2,6 @@ import Login, { Render } from 'react-login-page';
 
 function LoginPage() {
   return (
-
-    
-
     <Login>
       <Render>
         {({ fields, buttons }) => (
