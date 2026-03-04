@@ -1,6 +1,16 @@
 import Login, { Render } from 'react-login-page';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
+  const navigate = useNavigate();
+
+  const login = () => 
+  {
+    //Create logic to actually login later
+    console.log("TEST")
+    navigate('/surveys');
+  };
+
   return (
     <Login>
       <Render>
@@ -17,7 +27,7 @@ function LoginPage() {
       </Render>
       <Login.Input keyname="username" placeholder="Enter username" />
       <Login.Input keyname="password" placeholder="Enter password" type="password" />
-      <Login.Button keyname="submit" type="submit">Sign In</Login.Button>
+      <Login.Button keyname="submit" type="submit" onClick={login}>Sign In</Login.Button>
     </Login>
   );
 }
