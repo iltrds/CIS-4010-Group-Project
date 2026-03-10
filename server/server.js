@@ -6,8 +6,31 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/data', (req, res) => {
+app.get('/api/test', (req, res) => {
   res.json({ message: 'Hello from backend!' });
 });
+
+// Fetch a survey JSON using lambda function
+app.get('/api/fetch_survey', async (req, res) => {
+    try{
+        const response = await fetch('https://kz5xi5dhog.execute-api.us-east-1.amazonaws.com/test/surveys?survey-id=1');
+        const survey = await response.json();
+        res.json(survey); // return the survey
+    } catch (error){
+        res.status(500).json({error: error.message})
+    }
+    
+});
+
+app.post('/api/submit_survey', async (req, res) => {
+    const response = await fetch('https://kz5xi5dhog.execute-api.us-east-1.amazonaws.com/test/submitanswers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req.body)
+    });
+
+    const result = await response.json();
+    res.json(result);  // send the response back to the frontend
+})
 
 app.listen(8080, () => console.log('Server running on port 8080'));
