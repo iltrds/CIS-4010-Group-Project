@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -13,7 +15,9 @@ app.get('/api/test', (req, res) => {
 // Fetch a survey JSON using lambda function
 app.get('/api/fetch_survey', async (req, res) => {
     try{
-        const response = await fetch('https://kz5xi5dhog.execute-api.us-east-1.amazonaws.com/test/surveys?survey-id=1');
+        const response = await fetch(`${process.env.AWS_TEST_SURVEY}`, {     
+        });   
+        
         const survey = await response.json();
         res.json(survey); // return the survey
     } catch (error){
@@ -23,7 +27,7 @@ app.get('/api/fetch_survey', async (req, res) => {
 });
 
 app.post('/api/submit_survey', async (req, res) => {
-    const response = await fetch('https://kz5xi5dhog.execute-api.us-east-1.amazonaws.com/test/submitanswers', {
+    const response = await fetch(`${process.env.AWS_API_URL}/submitanswers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(req.body)
