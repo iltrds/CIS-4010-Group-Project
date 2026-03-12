@@ -13,18 +13,27 @@ app.get('/api/test', (req, res) => {
 });
 
 // Fetch a survey JSON using lambda function
-app.get('/api/fetch_survey', async (req, res) => {
+app.get('/api/fetch_survey/:surveyId', async (req, res) => {
+    try {
+      const { surveyId } = req.params;
+      const response = await fetch(`${process.env.AWS_GET_SURVEY}/${surveyId}`);
+      const survey = await response.json();
+      res.json(survey);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+app.get('/api/fetch_all', async (req, res) => {
     try{
-        const response = await fetch(`${process.env.AWS_TEST_SURVEY}`, {     
+        const response = await fetch(`${process.env.AWS_ALL_SURVEYS}`, {     
         });   
-        
-        const survey = await response.json();
-        res.json(survey); // return the survey
-    } catch (error){
+        const surveyList = await response.json()
+        res.json(surveyList) // Send back the list of surveys we got
+    } catch (error) {
         res.status(500).json({error: error.message})
     }
-    
-});
+})
 
 app.post('/api/submit_survey', async (req, res) => {
     const response = await fetch(`${process.env.AWS_API_URL}/submitanswers`, {
