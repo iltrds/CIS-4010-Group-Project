@@ -2,9 +2,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/login';
 import AccountPage from './pages/create_account';
 import Surveys from './pages/surveys'
-import Preview from './pages/preview'
+import Survey from './pages/survey'
+import Success from './pages/submission_success'
 
 function App() {
+
   return (
     <BrowserRouter>
       <Routes>
@@ -12,7 +14,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/create_account" element={<AccountPage />} />
         <Route path="/surveys" element={<Surveys />} />
-        <Route path="/preview" element={<Preview />} />
+        <Route path="/survey/:surveyId" element={<Survey />} />
+        <Route path="/submission_success" element={<Success />} />
       </Routes>
     </BrowserRouter>
   );
