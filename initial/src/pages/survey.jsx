@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {TextField, Button} from "@mui/material";
+import {TextField, Button, Box, Card, Stack, CardContent, Typography} from "@mui/material";
 import { useNavigate, useParams} from 'react-router-dom';
 
 function Survey() {
@@ -50,11 +50,12 @@ function Survey() {
 
   const buildAnswerType = (question, answerType) => {
     if (Array.isArray(answerType)) return (
-      <select onChange={(e) => handleAnswer(question, e.target.value)}>
-        {answerType.map((option) => (
-          <option key={option} value={option}>{option}</option>
-        ))}
-      </select>
+      
+            <select onChange={(e) => handleAnswer(question, e.target.value)}>
+              {answerType.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
     );
     if (answerType === 'Number') return (
       <TextField type="number" label={question} variant="outlined"
@@ -68,39 +69,56 @@ function Survey() {
 
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '200%' }}>
+    <>
       {data ? (
-        <>
-        <h1>{data.survey_name}</h1>
-        <h2>{'ID: '+ data['survey-id']}</h2>
+        <Box variant="outlined" sx={{ my: 4, mx: 'auto', maxWidth: 1800, width: '100%', borderRadius: 3, borderWidth: 2, borderColor: 'white', alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
+        <Card variant="outlined" sx={{ my: 4, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
+          <CardContent>
+                <Stack spacing={0.5}>
+                  <Typography variant="h1">{data.survey_name}</Typography>
+      
+                  <Typography variant="h4" color="text.secondary">
+                    10 questions
+                  </Typography>
+      
+                  <Typography variant="h4" color="text.secondary">
+                    This is a test description that will be filled in later
+                  </Typography>
+
+                  <Typography variant="h5" color="text.secondary">
+                    {'ID: '+ data['survey-id']}
+                  </Typography>
+                </Stack>
+            </CardContent>
+        </Card>
 
         <TextField type="number" label="User ID" variant="outlined"
         onChange={(e) => setID(e.target.value)} />
 
+        <>
         {Object.entries(data.questions).map(([question, answerType], index) => (
-            <div key={index} style={{ 
-                display: 'flex', 
-                flexDirection: 'row', 
-                alignItems: 'center',
-                gap: '20px',
-                margin: '10px 0'
-              }}>
-                <p>{index + 1}. {question}</p>
-                {buildAnswerType(question, answerType)}
 
-                {/* <p>Answer Type: {getAnswerType(answerType)}</p> */}
-            </div>
+          <Card key={index} variant="outlined" sx={{ my: 4, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
+            <CardContent>
+              <Stack spacing={0.5}>
+                <Typography variant="h3">{`${index+1}. ${question}`}</Typography>
+                {buildAnswerType(question, answerType)}
+              </Stack>
+            </CardContent>
+          </Card>
+                
         ))}
+        </>
 
         <Button onClick={submitAnswers}>Submit Answers</Button>
 
-        </>
+        </Box>
     
     ) : (
     
     <h1>Loading...</h1>)}
 
-    </div>
+    </>
   );
 }
 
