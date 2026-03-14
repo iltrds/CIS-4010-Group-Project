@@ -20,8 +20,8 @@ function Submission(){
             textAlign: 'center'
           }}
         >
-          <Typography variant="h4">Survey submitted!</Typography>
-          <Typography>Thank you for your submission</Typography>
+          <Typography variant="h1">Survey submitted!</Typography>
+          <Typography  variant="h4" color="text.secondary">Thank you for your submission</Typography>
           <Button onClick={goBack}>Go Back</Button>
 
         </Box>

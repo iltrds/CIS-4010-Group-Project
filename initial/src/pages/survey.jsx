@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import {TextField, Button, Box, Card, Stack, CardContent, Typography} from "@mui/material";
+import {TextField, Button, Box, Card, Stack, CardContent, Typography, RadioGroup, FormControlLabel, Radio} from "@mui/material";
 import { useNavigate, useParams} from 'react-router-dom';
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+   
 function Survey() {
   const [data, setData] = useState(null);
   const [answers, setAnswers] = useState({}); // Track the answers
@@ -50,19 +51,18 @@ function Survey() {
 
   const buildAnswerType = (question, answerType) => {
     if (Array.isArray(answerType)) return (
-      
-            <select onChange={(e) => handleAnswer(question, e.target.value)}>
-              {answerType.map((option) => (
-                <option key={option} value={option}>{option}</option>
+      <RadioGroup defaultValue="female" onChange={(e) => handleAnswer(question, e.target.value)}>
+        {answerType.map((option) => (
+                <FormControlLabel value={option} control={<Radio />} label={option} />
               ))}
-            </select>
+      </RadioGroup>
     );
     if (answerType === 'Number') return (
-      <TextField type="number" label={question} variant="outlined"
+      <TextField type="number" variant="outlined"
         onChange={(e) => handleAnswer(question, e.target.value)} />
     );
     if (answerType === 'String') return (
-      <TextField label={question} variant="outlined"
+      <TextField variant="outlined"
         onChange={(e) => handleAnswer(question, e.target.value)} />
     );
   };
@@ -71,7 +71,7 @@ function Survey() {
   return (
     <>
       {data ? (
-        <Box variant="outlined" sx={{ my: 4, mx: 'auto', maxWidth: 1800, width: '100%', borderRadius: 3, borderWidth: 2, borderColor: 'white', alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
+        <Box variant="outlined" sx={{ my: 3, mx: 5, maxWidth: 1800, width: '100%', borderRadius: 3, borderWidth: 2, borderColor: 'white', alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
         <Card variant="outlined" sx={{ my: 4, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
           <CardContent>
                 <Stack spacing={0.5}>
@@ -98,10 +98,10 @@ function Survey() {
         <>
         {Object.entries(data.questions).map(([question, answerType], index) => (
 
-          <Card key={index} variant="outlined" sx={{ my: 4, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
+          <Card key={index} variant="outlined" sx={{ my: 2, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
             <CardContent>
               <Stack spacing={0.5}>
-                <Typography variant="h3">{`${index+1}. ${question}`}</Typography>
+                <Typography variant="h4">{`${index+1}. ${question}`}</Typography>
                 {buildAnswerType(question, answerType)}
               </Stack>
             </CardContent>
@@ -110,9 +110,22 @@ function Survey() {
         ))}
         </>
 
-        <Button onClick={submitAnswers}>Submit Answers</Button>
+        <Button variant="contained" color="primary" size="large"
+            sx={{
+              px: 5,
+              py: 1.75,
+              fontSize: "1.3rem",
+              fontWeight: 600,
+            }}
+            onClick={submitAnswers}>
+            Submit Answers
+        </Button>
+
+        <ArrowBackIcon sx={{ position: 'fixed', left: '50px', top: '50px', fontSize: '4rem', cursor: 'pointer' }} onClick={() => {navigate('/surveys')}}/>
 
         </Box>
+
+        
     
     ) : (
     
