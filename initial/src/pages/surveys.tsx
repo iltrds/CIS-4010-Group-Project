@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SurveyCard from '../components/survey_card.tsx';
 
 function Surveys() 
 {
@@ -32,17 +33,13 @@ function Surveys()
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', width: '100vw', height: '100vh' }}>
-        <Box display='flex' flexDirection='column' sx={{ alignItems: 'center', m: '30px', border: "2px solid #ccc", borderRadius: "16px", py: 3, px: 20, boxSizing: "border-box" }}>
+        <Box display='flex' flexDirection='column' sx={{ alignItems: 'center', m: '30px', border: "2px solid #ccc", borderRadius: "16px", py: 3, px: 12, boxSizing: "border-box" }}>
           <Typography variant='h1' sx={{ mb: '10px' }}>Survey List</Typography>
           <TextField id="outlined-basic" label="Survey Name" variant="outlined" />
-  
+
           <List sx={{ width: '100%', mt: 2 }}>
             {surveyList && surveyList.map(survey => (
-              <ListItem key={survey['survey-id']} disablePadding>
-                <ListItemButton onClick={() => navigate(`/survey/${survey['survey-id']}`)}>
-                  <ListItemText primary={survey.survey_name} />
-                </ListItemButton>
-              </ListItem>
+              <SurveyCard key={survey['survey-id']} id={survey['survey-id']} title={survey.survey_name} questionCount={10} description='Test description until implemented' viewMode={true} />
             ))}
           </List>
   
