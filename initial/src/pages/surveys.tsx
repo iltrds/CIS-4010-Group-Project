@@ -41,20 +41,36 @@ function Surveys()
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', width: '100vw', height: '100vh' }}>
-        <Box display='flex' flexDirection='column' sx={{ minWidth: '900px', alignItems: 'center', m: '30px', border: "2px solid #ccc", borderRadius: "16px", py: 3, px: 12, boxSizing: "border-box" }}>
-          <Typography variant='h1' sx={{ mb: '10px' }}>Survey List</Typography>
-          <TextField id="outlined-basic" label="Survey Name" variant="outlined" onChange={(e) => {setSurveySearch(e.target.value)}}/>
+        <Box display='flex' flexDirection='column' position='relative' sx={{ minWidth: '900px', alignItems: 'center', m: '30px', border: "2px solid #ccc", borderRadius: "16px", py: 3, px: 12, boxSizing: "border-box", overflow: 'auto'}}>
 
-          <List sx={{ width: '100%', mt: 2 }}>
+          <Button variant="contained" color="primary" size="large"
+                      sx={{
+                        position: 'absolute',
+                        left: '20px',
+                        top: '40px',
+                        width: '150px',
+                        px: 5,
+                        py: 1.75,
+                        fontSize: "1.2rem",
+                        fontWeight: 600,
+                      }}
+                      onClick={() => { navigate('/create') }}>
+             Create Survey
+          </Button>
+
+          <Typography variant='h1' sx={{ mb: '10px' }}>Survey List</Typography>
+            <TextField id="outlined-basic" label="Survey Name" variant="outlined" onChange={(e) => {setSurveySearch(e.target.value)}} sx={{ width: '500px' }}/>
+
+          <Box sx={{ width: '100%', mt: 2}}>
             {viewSurveyList && viewSurveyList.map(survey => (
-              <SurveyCard key={survey['survey-id']} id={survey['survey-id']} title={survey.survey_name} questionCount={10} description='Test description until implemented' viewMode={true} />
+                <SurveyCard key={survey['survey-id']} id={survey['survey-id']} title={survey.survey_name} questionCount={10} description='Test description until implemented' viewMode={true} />
             ))}
-          </List>
+          </Box>
   
         </Box>
-        <Box display='flex' flexDirection='column' sx={{ alignItems: 'center', m: '30px', border: "2px solid #ccc", borderRadius: "16px", py: 3, px: 5, boxSizing: "border-box" }}>
+        <Box display='flex' flexDirection='column' sx={{ alignItems: 'center', m: '30px', border: "2px solid #ccc", borderRadius: "16px", py: 3, px: 5, boxSizing: "border-box", overflow: 'auto' }}>
           <Typography variant='h1' sx={{ mb: '10px' }}>Answered Surveys</Typography>
-          <TextField id="outlined-basic" label="Survey Name" variant="outlined" />
+          <TextField id="outlined-basic" label="Survey Name" variant="outlined" sx={{ width: '500px' }}/>
         </Box>
       </Box>
     );
