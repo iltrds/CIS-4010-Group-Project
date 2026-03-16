@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const verifyCognitoToken = require('./cognito');
 const app = express();
 
 // Allow all origins temporarily to test
@@ -13,7 +14,7 @@ app.get('/api/test', (req, res) => {
 });
 
 // Fetch a survey JSON using lambda function
-app.get('/api/fetch_survey/:surveyId', async (req, res) => {
+app.get('/api/fetch_survey/:surveyId', verifyCognitoToken, async (req, res) => {
     try {
       const { surveyId } = req.params;
       const response = await fetch(`${process.env.AWS_GET_SURVEY}/${surveyId}`);
@@ -24,7 +25,7 @@ app.get('/api/fetch_survey/:surveyId', async (req, res) => {
     }
   });
 
-app.get('/api/fetch_all', async (req, res) => {
+app.get('/api/fetch_all', verifyCognitoToken, async (req, res) => {
     try{
         const response = await fetch(`${process.env.AWS_ALL_SURVEYS}`, {     
         });   
@@ -35,7 +36,7 @@ app.get('/api/fetch_all', async (req, res) => {
     }
 })
 
-app.post('/api/submit_survey', async (req, res) => {
+app.post('/api/submit_survey', verifyCognitoToken, async (req, res) => {
     const response = await fetch(`${process.env.AWS_API_URL}/submitanswers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -44,6 +45,8 @@ app.post('/api/submit_survey', async (req, res) => {
 
     const result = await response.json();
     res.json(result);  // send the response back to the frontend
+
+    //TODO: Add logic to submit the survey using the userID from the cognito token
 })
 
 app.listen(8080, () => console.log('Server running on port 8080'));
