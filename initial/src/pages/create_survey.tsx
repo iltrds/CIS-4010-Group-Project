@@ -8,13 +8,17 @@ type Survey = {
     description: string;
     questions: {
         question: string;
-        answer: string | number | string[];
+        answer: string | string[];
     }[];
 }
 
 function CreateSurvey() {
   const [data, setData] = useState(null);
-  const [survey, setSurvey] = useState<Survey>({}); // Track the survey
+  const [survey, setSurvey] = useState<Survey>({
+    name: '',
+    description: '',
+    questions: []
+  }); // Track the survey
 
   const [questionType, setQuestionType] = useState<string>('');
   
@@ -49,26 +53,98 @@ function CreateSurvey() {
 
   }
 
-  const buildAnswerType = (question, answerType) => {
-    if (Array.isArray(answerType)) return (
-      <RadioGroup defaultValue="female" onChange={(e) => handleAnswer(question, e.target.value)}>
+  const buildAnswerType = (question, index) => {
+    if (Array.isArray(question.answer)) return (
+        <Box display='flex' flexDirection='column' >
+            <Box display='flex' flexDirection='row' alignItems='center'>
+                <Typography variant="h4">{`Enter Question ${index+1}`}</Typography>
+                <TextField variant="outlined" onChange={(e) => handleQuestionChange(index, question.question)} sx={{ flexGrow: 1, m:'10px' }}/>
+            </Box>
+        </Box>
+      /*<RadioGroup defaultValue="female" onChange={(e) => handleAnswer(question, e.target.value)}>
         {answerType.map((option) => (
                 <FormControlLabel value={option} control={<Radio />} label={option} />
               ))}
-      </RadioGroup>
-    );
-    if (answerType === 'Number') return (
-      <TextField type="number" variant="outlined"
-        onChange={(e) => handleAnswer(question, e.target.value)} />
-    );
-    if (answerType === 'String') return (
-      <TextField variant="outlined"
-        onChange={(e) => handleAnswer(question, e.target.value)} />
+      </RadioGroup>*/
+    )
+    else return (
+        <Box display='flex' flexDirection='column' >
+            <Box display='flex' flexDirection='row' alignItems='center'>
+                <Typography variant="h4">{`Enter Question ${index+1}`}</Typography>
+                <TextField variant="outlined" onChange={(e) => handleQuestionChange(index, question.question)} sx={{ flexGrow: 1, m:'10px' }}/>
+            </Box>
+            {question.answer === 'N' ?  <Typography variant="h5" color='text.secondary'>Datatype: number</Typography>
+                                     :  <Typography variant="h5" color='text.secondary'>Datatype: string</Typography>
+            }
+        </Box>
     );
   };
 
-  const addNewQuestion = (e) => 
+  const handleQuestionChange = (index: number, value: string) => 
+    {
+        setSurvey((prev) => 
+        {
+            const updatedQuestions = [...prev.questions];
+
+            updatedQuestions[index] = {
+            ...updatedQuestions[index],
+            question: value
+            };
+
+            return {
+            ...prev,
+            questions: updatedQuestions
+            };
+        });
+    };
+
+  const addNewQuestion = (questionType) => 
   {
+        if (questionType == 'text')
+        {
+            setSurvey( prev => (
+                {
+                    ...prev,
+                    questions: [
+                        ...prev.questions,
+                        {
+                        question: "",
+                        answer: "S"
+                        }
+                    ]
+                }
+            ));
+        }
+        else if (questionType == 'number')
+        {
+            setSurvey( prev => (
+                {
+                    ...prev,
+                    questions: [
+                        ...prev.questions,
+                        {
+                        question: "",
+                        answer: "N"
+                        }
+                    ]
+                }
+            ));
+        }
+        else
+        {
+            setSurvey( prev => (
+                {
+                    ...prev,
+                    questions: [
+                        ...prev.questions,
+                        {
+                            question: "",
+                            answer: []
+                        }
+                    ]
+                }
+            ));
+        }
         
 
         setQuestionType('');
@@ -96,6 +172,20 @@ function CreateSurvey() {
             </CardContent>
         </Card>
 
+        <>
+        {survey.questions && survey.questions.map((question, index) => (
+
+          <Card key={index} variant="outlined" sx={{ my: 2, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
+            <CardContent>
+              <Stack spacing={0.5}>
+                {buildAnswerType(question, index)}
+              </Stack>
+            </CardContent>
+          </Card>
+                
+        ))}
+        </>
+
         <Card display='flex' flexDirection='row' alignItems='center' justifyContent='space-evenly' variant="outlined" sx={{ my: 4, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
             <CardContent>
                 <Stack spacing={3} display='flex' flexDirection='row' alignItems='center' justifyContent='space-evenly'>
@@ -121,7 +211,7 @@ function CreateSurvey() {
                     fontSize: "1.3rem",
                     fontWeight: 600,
                     }}
-                    onClick={addNewQuestion}
+                    onClick={() => addNewQuestion(questionType)}
                     disabled={questionType == ''}>
                     Add Question
                     </Button>
