@@ -5,6 +5,7 @@ import Surveys from './pages/surveys'
 import Survey from './pages/survey'
 import Success from './pages/submission_success'
 import CreateSurvey from './pages/create_survey'
+import './amplifyConfig';
 
 function App() {
 
