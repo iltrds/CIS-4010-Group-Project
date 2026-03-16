@@ -4,6 +4,7 @@ import AccountPage from './pages/create_account';
 import Surveys from './pages/surveys'
 import Survey from './pages/survey'
 import Success from './pages/submission_success'
+import CreateSurvey from './pages/create_survey'
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/surveys" element={<Surveys />} />
         <Route path="/survey/:surveyId" element={<Survey />} />
         <Route path="/submission_success" element={<Success />} />
+        <Route path="/create" element={<CreateSurvey />} />
       </Routes>
     </BrowserRouter>
   );
