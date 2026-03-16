@@ -28,7 +28,16 @@ function Surveys()
 
     // Fetch all surveys
     useEffect(() => {
-      fetch('http://localhost:8080/api/fetch_all')
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+      fetch('http://localhost:8080/api/fetch_all', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
         .then(res => res.json())
         .then(surveyList => {setSurveys(surveyList); setViewSurveyList(surveyList);});
     }, []);

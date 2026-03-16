@@ -13,8 +13,17 @@ function Survey() {
 
   // Fetch the initial survey
   useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
     console.log('surveyId:', surveyId);
-    fetch(`http://localhost:8080/api/fetch_survey/${surveyId}`)
+    fetch(`http://localhost:8080/api/fetch_survey/${surveyId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => res.json())
       .then(data => {
         console.log('survey data:', data);
