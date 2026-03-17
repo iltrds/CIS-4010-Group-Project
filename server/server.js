@@ -37,16 +37,24 @@ app.get('/api/fetch_all', verifyCognitoToken, async (req, res) => {
 })
 
 app.post('/api/submit_survey', verifyCognitoToken, async (req, res) => {
-    const response = await fetch(`${process.env.AWS_API_URL}/submitanswers`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(req.body)
-    });
 
-    const result = await response.json();
-    res.json(result);  // send the response back to the frontend
+  // Get the userID from the cognito token
+  const cognitoUserId = res.locals.user.sub;
 
-    //TODO: Add logic to submit the survey using the userID from the cognito token
+  const submissionJSON = {
+    ...req.body,
+    "user-id": cognitoUserId,
+  }
+
+  // Forward the JSON to the Lambda function
+  const lambdaResponse = await fetch(`${process.env.AWS_API_URL}/submitanswers`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(submissionJSON)
+  });
+  // Wait for response
+  const result = await lambdaResponse.json();
+  res.json(result);
 })
 
 app.listen(8080, () => console.log('Server running on port 8080'));

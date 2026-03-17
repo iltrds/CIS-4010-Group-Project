@@ -6,7 +6,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 function Survey() {
   const [data, setData] = useState(null);
   const [answers, setAnswers] = useState({}); // Track the answers
-  const [userID, setID] = useState(null); // UserID
   
   const navigate = useNavigate();
   const { surveyId } = useParams();
@@ -38,8 +37,17 @@ function Survey() {
 
   const submitAnswers = async () => {
     // Build final JSON to send back to database with answers
+
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+
+
     const submissionJSON = {
-        "user-id": userID,
+        //"user-id": userID, //Backend now sends the userID from the cognito token
         "survey-id": data['survey-id'],
         "answers": answers
     }
@@ -47,7 +55,7 @@ function Survey() {
     // Send the JSON back to express to send to database
     const res = await fetch('http://localhost:8080/api/submit_survey', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(submissionJSON)
       });
     
@@ -101,8 +109,8 @@ function Survey() {
             </CardContent>
         </Card>
 
-        <TextField type="number" label="User ID" variant="outlined"
-        onChange={(e) => setID(e.target.value)} />
+        {/* <TextField type="number" label="User ID" variant="outlined"
+        onChange={(e) => setID(e.target.value)} /> */}
 
         <>
         {Object.entries(data.questions).map(([question, answerType], index) => (

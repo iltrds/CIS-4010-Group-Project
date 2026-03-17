@@ -18,6 +18,8 @@ function Surveys()
     'survey-id': number;
     survey_name: string;
     questions: Record<string, string | string[]>;
+    'num-questions': number;
+    'survey-description': string;
   }
   
   const [surveyList, setSurveys] = useState<Survey[]>([]);
@@ -47,6 +49,8 @@ function Surveys()
       setViewSurveyList(surveyList.filter(survey => survey.survey_name.toLowerCase().includes(surveySearch.toLowerCase())));
     }, [surveySearch]);
 
+    console.log(viewSurveyList);
+
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', width: '100vw', height: '100vh' }}>
@@ -72,7 +76,13 @@ function Surveys()
 
           <Box sx={{ width: '100%', mt: 2}}>
             {viewSurveyList && viewSurveyList.map(survey => (
-                <SurveyCard key={survey['survey-id']} id={survey['survey-id']} title={survey.survey_name} questionCount={10} description='Test description until implemented' viewMode={true} />
+                <SurveyCard 
+                  key={survey['survey-id']} 
+                  id={survey['survey-id']} 
+                  title={survey.survey_name} 
+                  questionCount={survey['num-questions']} 
+                  description={survey['survey-description']} 
+                  viewMode={true} />
             ))}
           </Box>
   
