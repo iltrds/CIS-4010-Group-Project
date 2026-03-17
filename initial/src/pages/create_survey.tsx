@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import {TextField, Button, Box, Card, Stack, CardContent, Typography, RadioGroup, FormControlLabel, Radio, FormControl, Select, MenuItem, InputLabel} from "@mui/material";
 import { useNavigate, useParams} from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
    
 type Survey = {
     name: string;
@@ -33,14 +34,19 @@ function CreateSurvey() {
 
   const createSurvey = async () => {
     // Build final JSON to send back to database with answers
-    /*const submissionJSON = {
-        "user-id": userID,
-        "survey-id": data['survey-id'],
-        "answers": answers
+    const submissionJSON = {
+        "user-id": 1, // FILL IN WITH ACTUAL USER_ID LATER
+        "survey_name": survey.name,
+        "survey_description": survey.description,
+        "questions": {
+            "M": {
+                
+            }
+        }
     }
 
     // Send the JSON back to express to send to database
-    const res = await fetch('http://localhost:8080/api/submit_survey', {
+    /*const res = await fetch('http://localhost:8080/api/submit_survey', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submissionJSON)
@@ -48,9 +54,10 @@ function CreateSurvey() {
     
     // Wait for response
     const result = await res.json();
-    console.log(result);*/
-    navigate('/submission_success');
+    console.log(result);
+    navigate('/submission_success');*/
 
+    console.log(JSON.stringify(survey));
   }
 
   const buildAnswerType = (question, index) => {
@@ -59,7 +66,36 @@ function CreateSurvey() {
             <Box display='flex' flexDirection='row' alignItems='center'>
                 <Typography variant="h4">{`Enter Question ${index+1}`}</Typography>
                 <TextField variant="outlined" onChange={(e) => handleQuestionChange(index, question.question)} sx={{ flexGrow: 1, m:'10px' }}/>
+                <RemoveCircleOutlineIcon sx={{ fontSize: '4rem', cursor: 'pointer', color: '#f44336', '&:hover': { color: '#e57373' } }} onClick={() => removeQuestion(index)}/>
             </Box>
+
+            <Typography variant="h5" color='text.secondary'>Datatype: multiple choice</Typography>
+
+            <Stack  spacing={0.5}>
+                {Array.isArray(question.answer) && question.answer.map((option, optionIndex) => (
+                        
+                    <Box key={`${index} ${optionIndex}`} display='flex' flexDirection='row' alignItems='center'>
+                        <Typography variant="h5">{`Enter Option ${optionIndex+1}`}</Typography>
+                        <TextField variant="outlined" value={option} onChange={(e) => handleAnswerChange(index, e.target.value, optionIndex)} sx={{ flexGrow: 1, m:'10px' }}/>
+                        <RemoveCircleOutlineIcon sx={{ fontSize: '3rem', cursor: 'pointer', color: '#f44336', '&:hover': { color: '#e57373' } }} onClick={() => removeMcOption(index, optionIndex)}/>
+                    </Box>
+                ))}
+            </Stack>   
+
+            <Button variant="outlined" color="primary" size="large"
+                    sx={{
+                    px: 5,
+                    py: 1.75,
+                    mx: 10,
+                    mt: 3,
+                    fontSize: "1.3rem",
+                    fontWeight: 600,
+                    }}
+                    onClick={() => addMcOption(index)}>
+                    Add Option
+            </Button>
+
+            
         </Box>
       /*<RadioGroup defaultValue="female" onChange={(e) => handleAnswer(question, e.target.value)}>
         {answerType.map((option) => (
@@ -72,6 +108,7 @@ function CreateSurvey() {
             <Box display='flex' flexDirection='row' alignItems='center'>
                 <Typography variant="h4">{`Enter Question ${index+1}`}</Typography>
                 <TextField variant="outlined" onChange={(e) => handleQuestionChange(index, question.question)} sx={{ flexGrow: 1, m:'10px' }}/>
+                <RemoveCircleOutlineIcon sx={{ fontSize: '4rem', cursor: 'pointer', color: '#f44336', '&:hover': { color: '#e57373' } }} onClick={() => removeQuestion(index)}/>
             </Box>
             {question.answer === 'N' ?  <Typography variant="h5" color='text.secondary'>Datatype: number</Typography>
                                      :  <Typography variant="h5" color='text.secondary'>Datatype: string</Typography>
@@ -79,6 +116,55 @@ function CreateSurvey() {
         </Box>
     );
   };
+
+  const addMcOption = (index: number) => 
+  {
+        setSurvey( prev => (
+        {
+            ...prev,
+            questions: prev.questions.map((q, i) => 
+                i === index ? 
+                {
+                    ...q,
+                    answer:  Array.isArray(q.answer) ? [...q.answer, ''] : [q.answer, '']
+                }
+                : q)
+        }
+        ));
+  }
+
+  const removeMcOption = (questionIndex: number, optionIndex: number) => 
+  {
+    setSurvey(prev => ({
+        ...prev,
+        questions: prev.questions.map((q, i) =>
+        i === questionIndex
+        ? {
+            ...q,
+            answer: Array.isArray(q.answer)
+            ? q.answer.filter((_, a_i) => a_i !== optionIndex)
+            : q.answer 
+        }
+        : q
+        )
+    }));
+};
+
+  const handleAnswerChange = (index: number, option: string, optionIndex: number) => 
+  {
+    setSurvey((prev) => (
+    {
+        ...prev,
+            questions: prev.questions.map((q, i) => 
+                i === index ? 
+                {
+                    ...q,
+                    answer: Array.isArray(q.answer) ? q.answer.map((a, a_i) => a_i === optionIndex ? option : a )
+                                                    : q.answer
+                }
+                : q)
+    }))
+  }
 
   const handleQuestionChange = (index: number, value: string) => 
     {
@@ -148,6 +234,14 @@ function CreateSurvey() {
         
 
         setQuestionType('');
+  }
+
+  const removeQuestion = (index:number) => 
+  {
+    setSurvey(prev => ({
+        ...prev,
+        questions: prev.questions.filter((_, q_i) => q_i !== index)
+    }));
   }
 
 
