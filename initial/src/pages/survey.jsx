@@ -36,15 +36,12 @@ function Survey() {
   }
 
   const submitAnswers = async () => {
-    // Build final JSON to send back to database with answers
 
     const token = localStorage.getItem('authToken');
     if (!token) {
       navigate('/login');
       return;
     }
-
-
 
     const submissionJSON = {
         //"user-id": userID, //Backend now sends the userID from the cognito token
@@ -95,11 +92,11 @@ function Survey() {
                   <Typography variant="h1">{data.survey_name}</Typography>
       
                   <Typography variant="h4" color="text.secondary">
-                    10 questions
+                    {data['num-questions']} questions
                   </Typography>
       
                   <Typography variant="h4" color="text.secondary">
-                    This is a test description that will be filled in later
+                    {data['survey-description']}
                   </Typography>
 
                   <Typography variant="h5" color="text.secondary">
