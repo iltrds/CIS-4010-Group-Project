@@ -50,6 +50,23 @@ app.get('/api/fetch_user_submissions', verifyCognitoToken, async (req, res) => {
   }
 });
 
+app.post('/api/create_survey', verifyCognitoToken, async (req, res) => {
+  try {
+    const submissionJSON = req.body; // JSON from the request sent from the frontend
+
+    const response = await fetch(`${process.env.AWS_API_URL}/createsurvey`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify(submissionJSON)
+    });
+    const result = await response.json();
+    res.json(result);
+  }
+  catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
 app.post('/api/submit_survey', verifyCognitoToken, async (req, res) => {
 
   // Get the userID from the cognito token

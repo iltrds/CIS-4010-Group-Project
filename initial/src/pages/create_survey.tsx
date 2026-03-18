@@ -32,41 +32,40 @@ function CreateSurvey() {
   }
 
   const createSurvey = async () => {
+
+    const token = localStorage.getItem('authToken');
     // Build final JSON to send back to database with answers
     const submissionJSON = {
-        "user-id": { "N": "1" }, // FILL IN WITH ACTUAL USER_ID LATER
-        "survey_name": { "S": survey.name },
-        "survey_description": { "S": survey.description },
-        "questions": {
-            "M": Object.fromEntries(
-                    survey.questions.map(q => [
-                        q.question,
-                        Array.isArray(q.answer) ? 
-                        {   
-                            "L": q.answer.map(a => ( { "S": a } ))
-                        }
-                    :   {
-                            "S": q.answer
-                        }
-                ])
-            )
-        }
-    }
+      "survey_name": survey.name,
+      "survey-description": survey.description,
+      "questions": Object.fromEntries(
+          survey.questions.map(q => [
+              q.question,
+              Array.isArray(q.answer) ? q.answer : q.answer  // already "String", "Number", or ["opt1", "opt2"]
+          ])
+      )
+    };
 
     // Send the JSON back to express to send to database
-    /*const res = await fetch('http://localhost:8080/api/submit_survey', {
+    const res = await fetch('http://localhost:8080/api/create_survey', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(submissionJSON)
       });
     
     // Wait for response
     const result = await res.json();
-    console.log(result);
-    navigate('/submission_success');*/
+    //console.log(result);
 
-    console.log(JSON.stringify(survey));
-    console.log(JSON.stringify(submissionJSON));
+    if (result.message === 'Survey created successfully') {
+      alert('Survey created successfully');
+      navigate('/surveys');
+    } else {
+      alert('Failed to create survey');
+    }
+
+    // console.log(JSON.stringify(survey));
+    // console.log(JSON.stringify(submissionJSON));
   }
 
   const buildAnswerType = (question, index) => {
@@ -297,7 +296,7 @@ function CreateSurvey() {
         ))}
         </>
 
-        <Card display='flex' flexDirection='row' alignItems='center' justifyContent='space-evenly' variant="outlined" sx={{ my: 4, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
+        <Card variant="outlined" sx={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-evenly', my: 4, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
             <CardContent>
                 <Stack spacing={3} display='flex' flexDirection='row' alignItems='center' justifyContent='space-evenly'>
                     <FormControl sx={{ width: '300px' }}>
