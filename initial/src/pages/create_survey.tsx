@@ -29,19 +29,27 @@ function CreateSurvey() {
   // Handle whenever a survey answer is changed
   const handleAnswer = (question, answer) =>{
     setAnswers(prev => ({ ...prev, [question]: answer }));
-    console.log(answers)
   }
 
   const createSurvey = async () => {
     // Build final JSON to send back to database with answers
     const submissionJSON = {
-        "user-id": 1, // FILL IN WITH ACTUAL USER_ID LATER
-        "survey_name": survey.name,
-        "survey_description": survey.description,
+        "user-id": { "N": "1" }, // FILL IN WITH ACTUAL USER_ID LATER
+        "survey_name": { "S": survey.name },
+        "survey_description": { "S": survey.description },
         "questions": {
-            "M": {
-                
-            }
+            "M": Object.fromEntries(
+                    survey.questions.map(q => [
+                        q.question,
+                        Array.isArray(q.answer) ? 
+                        {   
+                            "L": q.answer.map(a => ( { "S": a } ))
+                        }
+                    :   {
+                            "S": q.answer
+                        }
+                ])
+            )
         }
     }
 
@@ -58,6 +66,7 @@ function CreateSurvey() {
     navigate('/submission_success');*/
 
     console.log(JSON.stringify(survey));
+    console.log(JSON.stringify(submissionJSON));
   }
 
   const buildAnswerType = (question, index) => {
@@ -65,7 +74,11 @@ function CreateSurvey() {
         <Box display='flex' flexDirection='column' >
             <Box display='flex' flexDirection='row' alignItems='center'>
                 <Typography variant="h4">{`Enter Question ${index+1}`}</Typography>
-                <TextField variant="outlined" onChange={(e) => handleQuestionChange(index, question.question)} sx={{ flexGrow: 1, m:'10px' }}/>
+                <TextField variant="outlined" onChange={(e) => {
+                    const newQuestions = [...survey.questions];
+                    newQuestions[index].question = e.target.value;
+                    setSurvey(prev => ({ ...prev, questions: newQuestions }))
+                }}  sx={{ flexGrow: 1, m:'10px' }}/>
                 <RemoveCircleOutlineIcon sx={{ fontSize: '4rem', cursor: 'pointer', color: '#f44336', '&:hover': { color: '#e57373' } }} onClick={() => removeQuestion(index)}/>
             </Box>
 
@@ -107,7 +120,11 @@ function CreateSurvey() {
         <Box display='flex' flexDirection='column' >
             <Box display='flex' flexDirection='row' alignItems='center'>
                 <Typography variant="h4">{`Enter Question ${index+1}`}</Typography>
-                <TextField variant="outlined" onChange={(e) => handleQuestionChange(index, question.question)} sx={{ flexGrow: 1, m:'10px' }}/>
+                <TextField variant="outlined" onChange={(e) => {
+                    const newQuestions = [...survey.questions];
+                    newQuestions[index].question = e.target.value;
+                    setSurvey(prev => ({ ...prev, questions: newQuestions }))
+                }}  sx={{ flexGrow: 1, m:'10px' }}/>
                 <RemoveCircleOutlineIcon sx={{ fontSize: '4rem', cursor: 'pointer', color: '#f44336', '&:hover': { color: '#e57373' } }} onClick={() => removeQuestion(index)}/>
             </Box>
             {question.answer === 'N' ?  <Typography variant="h5" color='text.secondary'>Datatype: number</Typography>
@@ -195,7 +212,7 @@ function CreateSurvey() {
                         ...prev.questions,
                         {
                         question: "",
-                        answer: "S"
+                        answer: "String"
                         }
                     ]
                 }
@@ -210,7 +227,7 @@ function CreateSurvey() {
                         ...prev.questions,
                         {
                         question: "",
-                        answer: "N"
+                        answer: "Number"
                         }
                     ]
                 }
@@ -254,12 +271,12 @@ function CreateSurvey() {
 
                     <Box display='flex' flexDirection='row' alignItems='center' color="text.secondary">
                         <Typography variant="h4" sx={{ mr: '15px'}}>Enter Survey Title</Typography>
-                        <TextField variant="outlined" onChange={(e) => handleAnswer("name", e.target.value)} sx={{ flexGrow: 1, m:'10px' }}/>
+                        <TextField variant="outlined" onChange={(e) => setSurvey(prev => ( { ...prev, name: e.target.value }))}  sx={{ flexGrow: 1, m:'10px' }}/>
                     </Box>
       
                     <Box display='flex' flexDirection='row' alignItems='center' color="text.secondary">
                         <Typography variant="h4" sx={{ mr: '15px'}}>Enter Survey Description</Typography>
-                        <TextField variant="outlined" multiline rows={2} onChange={(e) => handleAnswer("description", e.target.value)} sx={{ flexGrow: 1, m:'10px' }}/>
+                        <TextField variant="outlined" multiline rows={2} onChange={(e) => setSurvey(prev => ( { ...prev, description: e.target.value }))} sx={{ flexGrow: 1, m:'10px' }}/>
                     </Box>
                   
                 </Stack>
