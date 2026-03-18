@@ -23,7 +23,7 @@ app.get('/api/fetch_survey/:surveyId', verifyCognitoToken, async (req, res) => {
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  });
+});
 
 app.get('/api/fetch_all', verifyCognitoToken, async (req, res) => {
     try{
@@ -35,6 +35,20 @@ app.get('/api/fetch_all', verifyCognitoToken, async (req, res) => {
         res.status(500).json({error: error.message})
     }
 })
+
+// Fetch user submitted answers to the surveys
+app.get('/api/fetch_user_submissions', verifyCognitoToken, async (req, res) => {
+  try {
+    const response = await fetch(`${process.env.AWS_API_URL}/surveys/submissions`, {
+      headers: { 'Authorization': req.headers['authorization'] }
+    });
+    const submissions = await response.json();
+    res.json(submissions);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.post('/api/submit_survey', verifyCognitoToken, async (req, res) => {
 
