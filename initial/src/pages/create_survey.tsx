@@ -39,6 +39,7 @@ function CreateSurvey() {
       "survey_name": survey.name,
       "survey-description": survey.description,
       "questions": Object.fromEntries(
+        // Lambda takes care of alot of the formatting, so we just need to send the questions and answers
           survey.questions.map(q => [
               q.question,
               Array.isArray(q.answer) ? q.answer : q.answer  // already "String", "Number", or ["opt1", "opt2"]

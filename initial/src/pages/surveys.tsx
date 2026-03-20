@@ -116,7 +116,8 @@ function Surveys()
                   title={survey.survey_name} 
                   questionCount={survey['num-questions']} 
                   description={survey['survey-description']} 
-                  viewMode={true} />
+                  viewMode={true}
+                />
             ))}
           </Box>
   
@@ -132,7 +133,8 @@ function Surveys()
                   title={survey.survey_name} 
                   questionCount={survey['num-questions']} 
                   description={survey['survey-description']} 
-                  viewMode={true} />
+                  viewMode={false} 
+                />
               ))}
             </Box>
           

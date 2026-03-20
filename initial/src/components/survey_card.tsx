@@ -7,7 +7,7 @@ interface SurveyCardProps {
   title: string;
   questionCount: number;
   description: string;
-  viewMode?: boolean; // if true -> button says VIEW
+  viewMode?: boolean; // if true -> "Answer", if false -> "View Answer"
 }
 
 const SurveyCard: React.FC<SurveyCardProps> = ({ id, title, questionCount, description, viewMode}) => 
@@ -41,8 +41,11 @@ const SurveyCard: React.FC<SurveyCardProps> = ({ id, title, questionCount, descr
               fontSize: "1rem",
               fontWeight: 600,
             }}
-            onClick={() => { console.log("test"); viewMode ? navigate(`/survey/${id}`) : navigate(`/answer/${id}`) }}>
-            {viewMode ? "VIEW" : "ANSWER"}
+            onClick={() => {
+              if (viewMode) navigate(`/survey/${id}`);
+              else navigate(`/survey_submission/${id}`);
+            }}>
+            {viewMode ? "ANSWER" : "VIEW ANSWER"}
           </Button>
         </Stack>
       </CardContent>
@@ -51,4 +54,3 @@ const SurveyCard: React.FC<SurveyCardProps> = ({ id, title, questionCount, descr
 };
 
 export default SurveyCard;
-
