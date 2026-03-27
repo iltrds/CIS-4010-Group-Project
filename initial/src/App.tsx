@@ -5,6 +5,8 @@ import Surveys from './pages/surveys'
 import Survey from './pages/survey'
 import Success from './pages/submission_success'
 import CreateSurvey from './pages/create_survey'
+import SurveySubmission from './pages/survey_submission'
+import './amplifyConfig';
 
 function App() {
 
@@ -18,6 +20,7 @@ function App() {
         <Route path="/survey/:surveyId" element={<Survey />} />
         <Route path="/submission_success" element={<Success />} />
         <Route path="/create" element={<CreateSurvey />} />
+        <Route path="/survey_submission/:surveyId" element={<SurveySubmission />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,26 +1,59 @@
-import Login, { Render } from 'react-login-page';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { signUp } from 'aws-amplify/auth';
+
 
 function AccountPage() {
-  return (
-    <Login>
-      <Render>
-        {({ fields, buttons }) => (
-          <div style={{ justifyContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column', height: '100vh', width: '175vh'}}>
-            <h1>Account Creation</h1>
-            <label>{fields.username}</label>
-            <label>{fields.password}</label>
-            <label>{fields.passwordConfirm}</label>
-            <div>{buttons.submit}</div>
-            <label>Already have an account? <a href='/login'>Login</a></label>
-          </div>
-        )}
-      </Render>
-      <Login.Input keyname="username" placeholder="Enter username" />
-      <Login.Input keyname="password" placeholder="Enter password" type="password" />
-      <Login.Input keyname="passwordConfirm" placeholder="Confirm password" type="passwordConfirm" />
-      <Login.Button keyname="submit" type="submit">Create Account</Login.Button>
-    </Login>
-  );
-}
 
+  const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const createAccount = async () => {
+    console.log('Create account function triggered');
+    if (!username || !password || !confirmPassword) {
+      alert('Please fill in all fields');
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+    try {
+      await signUp({ username, password });
+      alert('Account created successfully! You can now log in.');
+      navigate('/login');
+    } catch (error: any) {
+      console.error('Sign up failed:', error);
+      alert(error.message || 'Account creation failed');
+    }    
+};
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <h1>CIS 4010 Survey System</h1>
+      <h2>Create Account</h2>
+      <input
+        placeholder="Enter email"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <input
+        placeholder="Enter password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <input
+        placeholder="Confirm password"
+        type="password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
+      <button onClick={createAccount}>Create Account</button>
+      <label>Already have an account? <a href='/login'>Login</a></label>
+    </div>
+  );
+};
 export default AccountPage;

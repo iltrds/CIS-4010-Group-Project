@@ -1,20 +1,23 @@
-import { useState, useEffect } from 'react';
-import {TextField, Button, Box, Card, Stack, CardContent, Typography, RadioGroup, FormControlLabel, Radio, FormControl, Select, MenuItem, InputLabel} from "@mui/material";
+import { useState, useEffect } from 'react'; // Warning -  value never read
+import {TextField, Button, Box, Card, Stack, CardContent, Typography, FormControl, Select, MenuItem, InputLabel} from "@mui/material";
 import { useNavigate, useParams} from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
    
+// Modularise survey subtypes
+type Question = {
+  question: string;
+  answer: string | string[];
+}
+
 type Survey = {
     name: string;
     description: string;
-    questions: {
-        question: string;
-        answer: string | string[];
-    }[];
+    questions: Question[];
 }
 
 function CreateSurvey() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState(null); // Warning - value never read
   const [survey, setSurvey] = useState<Survey>({
     name: '',
     description: '',
@@ -24,52 +27,52 @@ function CreateSurvey() {
   const [questionType, setQuestionType] = useState<string>('');
   
   const navigate = useNavigate();
-  const { surveyId } = useParams();
+  const { surveyId } = useParams(); // Warning - value never read
 
-  // Handle whenever a survey answer is changed
-  const handleAnswer = (question, answer) =>{
-    setAnswers(prev => ({ ...prev, [question]: answer }));
-  }
+  // Handle whenever a survey answer is changed -- IS THIS NEEDED, WAS CAUSING ERRORS/WARNINGS
+  // const handleAnswer = (question: string, answer: string) =>{
+  //   setAnswers(prev => ({ ...prev, [question]: answer }));
+  // }
 
   const createSurvey = async () => {
+
+    const token = localStorage.getItem('authToken');
     // Build final JSON to send back to database with answers
     const submissionJSON = {
-        "user-id": { "N": "1" }, // FILL IN WITH ACTUAL USER_ID LATER
-        "survey_name": { "S": survey.name },
-        "survey_description": { "S": survey.description },
-        "questions": {
-            "M": Object.fromEntries(
-                    survey.questions.map(q => [
-                        q.question,
-                        Array.isArray(q.answer) ? 
-                        {   
-                            "L": q.answer.map(a => ( { "S": a } ))
-                        }
-                    :   {
-                            "S": q.answer
-                        }
-                ])
-            )
-        }
-    }
+      "survey_name": survey.name,
+      "survey-description": survey.description,
+      "questions": Object.fromEntries(
+        // Lambda takes care of alot of the formatting, so we just need to send the questions and answers
+          survey.questions.map(q => [
+              q.question,
+              Array.isArray(q.answer) ? q.answer : q.answer  // already "String", "Number", or ["opt1", "opt2"]
+          ])
+      )
+    };
 
     // Send the JSON back to express to send to database
-    /*const res = await fetch('http://localhost:8080/api/submit_survey', {
+    const res = await fetch('http://localhost:8080/api/create_survey', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(submissionJSON)
       });
     
     // Wait for response
     const result = await res.json();
-    console.log(result);
-    navigate('/submission_success');*/
+    //console.log(result);
 
-    console.log(JSON.stringify(survey));
-    console.log(JSON.stringify(submissionJSON));
+    if (result.message === 'Survey created successfully') {
+      alert('Survey created successfully');
+      navigate('/surveys');
+    } else {
+      alert('Failed to create survey');
+    }
+
+    // console.log(JSON.stringify(survey));
+    // console.log(JSON.stringify(submissionJSON));
   }
 
-  const buildAnswerType = (question, index) => {
+  const buildAnswerType = (question : Question, index : number) => {
     if (Array.isArray(question.answer)) return (
         <Box display='flex' flexDirection='column' >
             <Box display='flex' flexDirection='row' alignItems='center'>
@@ -183,6 +186,7 @@ function CreateSurvey() {
     }))
   }
 
+  // WARNING - value never read
   const handleQuestionChange = (index: number, value: string) => 
     {
         setSurvey((prev) => 
@@ -201,7 +205,7 @@ function CreateSurvey() {
         });
     };
 
-  const addNewQuestion = (questionType) => 
+  const addNewQuestion = (questionType: string) => 
   {
         if (questionType == 'text')
         {
@@ -263,7 +267,7 @@ function CreateSurvey() {
 
 
   return (
-        <Box variant="outlined" sx={{ my: 3, mx: 5, maxWidth: 1800, width: '100%', borderRadius: 3, borderWidth: 2, borderColor: 'white', alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
+        <Box sx={{ my: 3, mx: 5, maxWidth: 1800, width: '100%', borderRadius: 3, borderWidth: 2, borderColor: 'white', alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
         <Card variant="outlined" sx={{ my: 4, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
           <CardContent>
                 <Stack spacing={3}>
@@ -297,7 +301,7 @@ function CreateSurvey() {
         ))}
         </>
 
-        <Card display='flex' flexDirection='row' alignItems='center' justifyContent='space-evenly' variant="outlined" sx={{ my: 4, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
+        <Card variant="outlined" sx={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-evenly', my: 4, mx: 0, borderRadius: 3, width: '100%', borderWidth: 2, borderColor: 'white'}}>
             <CardContent>
                 <Stack spacing={3} display='flex' flexDirection='row' alignItems='center' justifyContent='space-evenly'>
                     <FormControl sx={{ width: '300px' }}>
